@@ -1,5 +1,5 @@
 import { saisiUser,afficheAllCard,rechargerFormulaire,getAllChecked,getAllTotalContact,pageSuivante, pagePrecedente,afficheUnCard,setRecherche} from "./js/service/contactService.js";
-import { form,prenom,nom,email,telephone,selectRole,btnAjouter, listeContacts,btnToutSupprimer,btnPrev,btnInfo,btnNext,inputRecherche} from "./js/dom/element.js";
+import { form,prenom,nom,email,telephone,selectRole,btnAjouter, listeContacts,btnToutSupprimer,btnPrev,btnInfo,btnNext,inputRecherche,modalConfirm,confirmTexte,confirmOui,confirmNon,toutSelectionner} from "./js/dom/element.js";
 import { ajoutUser, getAllUsers, modifierUser,supprimerUser } from "./js/store/contactStore.js";
 import { afficherSucces } from "./js/ui/modalRenderer.js";
 import {verifMail,verifData,verifTelephone, resetErrors,afficherErreurs} from "./js/validation/validation.js";
@@ -37,6 +37,7 @@ form.addEventListener("submit",async function(event){
 })
 
 let idsCocher  =[]
+let idSupprimer
 listeContacts.addEventListener("click",async function(event){
     const btnSupp = event.target.closest(".btn-supprimer")
     const btnModifier = event.target.closest(".btn-modifier")
@@ -47,23 +48,67 @@ listeContacts.addEventListener("click",async function(event){
         idModifier = await rechargerFormulaire(id)
     }
     if(btnSupp){
-        let id = btnSupp.dataset.id
-        await supprimerUser(id)
-        afficherSucces("Contact supprimé avec succès")
+        idSupprimer = btnSupp.dataset.id
+        
+        modalConfirm.classList.remove("hidden")
+        // console.log(modalConfirm)
+        confirmTexte.textContent = "Voulez-vous vraiment supprimer cet contact"
+        
     }
     if(checkeds){
         let allUsersCheked = getAllChecked()
         idsCocher =  allUsersCheked.map(co => co.dataset.id)
-        console.log(idsCocher)
+        // console.log(idsCocher)
+        if(idsCocher.length >= 3){
+             btnToutSupprimer.classList.remove("hidden")
+             btnToutSupprimer.style.backgroundColor ="red"
+              btnToutSupprimer.style.color ="white"
+             console.log(btnToutSupprimer)
+}
     }
 })
+ console.log(idsCocher)
+
+
+toutSelectionner.addEventListener("change", async function() {
+    const toutesLesCheckbox = document.querySelectorAll(".cocher")
+
+    toutesLesCheckbox.forEach(checkbox => {
+        if (checkbox.checked !== toutSelectionner.checked) {
+            checkbox.checked = toutSelectionner.checked
+            checkbox.dispatchEvent(new Event("change"))
+        }
+    })
+
+    if (toutSelectionner.checked) {
+        idsCocher = Array.from(toutesLesCheckbox).map(co => co.dataset.id)
+        btnToutSupprimer.classList.remove("hidden")
+        btnToutSupprimer.style.color = "red"
+    } else {
+        idsCocher = []
+        btnToutSupprimer.classList.add("hidden")
+    }
+})
+
+
+
+
+
+
+
+
 btnToutSupprimer.addEventListener("click", async function(){
-    if(idsCocher.length >= 3){
-             btnToutSupprimer.style.color ="red"
                 let promesse = idsCocher.map(id => supprimerUser(id))
                 await Promise.all(promesse)
-            }
-    })
+            })
+confirmOui.addEventListener("click", async function(){
+    await supprimerUser(idSupprimer)
+    afficherSucces("Contact supprimé avec succès")
+})
+confirmNon.addEventListener("click", async function(){
+            modalConfirm.classList.add("hidden")
+
+})
 // NOMBRE DE CONTACTS
 let total = await getAllTotalContact()
 compteur.textContent = `${total} contacts`
@@ -86,4 +131,5 @@ inputRecherche .addEventListener("input",async function(){
     // // console.log(inputRecherche.value)
     // tab.forEach(t=>afficheUnCard(t))
 })
+
 await afficheAllCard()

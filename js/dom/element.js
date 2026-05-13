@@ -18,3 +18,13 @@ export  const btnPrev = document.getElementById('btn-prev');
 export  const btnInfo = document.getElementById('page-info');
 export  const btnNext = document.getElementById('btn-next');
 
+//MODAL
+export  const modalConfirm = document.getElementById('modalConfirm');
+export  const confirmTexte = document.getElementById('confirmTexte');
+export  const confirmOui = document.getElementById('confirmOui');
+export  const confirmNon = document.getElementById('confirmNon');
+
+
+
+//TOUT SELECTIONNER
+export  const toutSelectionner = document.getElementById('tout-selectionner');
