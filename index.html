@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contacts</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #fff5f5;
+      color: #2d1a1a;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ===== VARIABLES ===== */
+    :root {
+      --rouge: #8b1a2e;
+      --rouge-clair: #f9e8ea;
+      --rouge-moyen: #c0394f;
+      --gris-texte: #6b4444;
+      --bordure: #e8c8cc;
+    }
+
+    /* ===== SIDEBAR (panneau gauche) ===== */
+    .sidebar {
+      width: 340px;
+      min-height: 100vh;
+      background-color: #ffffff;
+      border-right: 1px solid var(--bordure);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-titre h1 {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #1a0a0a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-titre h1::before {
+      content: '';
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: var(--rouge);
+      border-radius: 50%;
+    }
+
+    .sidebar-titre p {
+      font-size: 0.8rem;
+      color: var(--gris-texte);
+      font-family: 'Courier New', monospace;
+      margin-top: 4px;
+    }
+
+
+    .formulaire {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .champ label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      color: var(--gris-texte);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .champ input,
+    .champ select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--bordure);
+      border-radius: 8px;
+      background-color: var(--rouge-clair);
+      color: #2d1a1a;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .champ input::placeholder {
+      color: #c4a0a5;
+    }
+
+    .champ input:focus,
+    .champ select:focus {
+      border-color: var(--rouge-moyen);
+    }
+
+    .champ select {
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b1a2e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .btn-ajouter {
+      width: 100%;
+      padding: 13px;
+      background-color: var(--rouge);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-ajouter:hover {
+      background-color: #6e1222;
+    }
+
+   
+    .main {
+      flex: 1;
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+   
+    .barre-haut {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .barre-haut-gauche {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .compteur {
+      font-size: 0.95rem;
+      color: var(--gris-texte);
+      font-style: italic;
+    }
+
+    .input-recherche {
+      padding: 8px 16px;
+      border: 1px solid var(--bordure);
+      border-radius: 20px;
+      background-color: #fff0f1;
+      font-size: 0.85rem;
+      color: #2d1a1a;
+      outline: none;
+      width: 220px;
+      transition: border-color 0.2s;
+    }
+
+    .input-recherche::placeholder {
+      color: #c4a0a5;
+    }
+
+    .input-recherche:focus {
+      border-color: var(--rouge-moyen);
+    }
+
+    .btn-tout-supprimer {
+      padding: 8px 18px;
+      border: 1px solid var(--bordure);
+      border-radius: 8px;
+      background: white;
+      color: var(--gris-texte);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-tout-supprimer:hover {
+      background: var(--rouge-clair);
+    }
+
+
+    .liste-contacts {
+      display: grid;
+    grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+   
+    .carte-contact {
+      background: white;
+      border: 1px solid var(--bordure);
+      border-radius: 14px;
+      padding: 20px 24px;
+      max-width: 460px;
+    }
+
+    .carte-entete {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--bordure);
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background-color: var(--rouge-clair);
+      color: var(--rouge);
+      font-weight: bold;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .carte-nom h3 {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #1a0a0a;
+    }
+
+    .carte-nom span {
+      font-size: 0.75rem;
+      color: var(--gris-texte);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .carte-infos {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 0.85rem;
+      color: var(--gris-texte);
+      margin-bottom: 14px;
+    }
+
+    .carte-infos span::before {
+      margin-right: 6px;
+    }
+
+    .carte-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-modifier,
+    .btn-supprimer {
+      padding: 7px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: 1px solid var(--bordure);
+      background: white;
+      color: #2d1a1a;
+      transition: background 0.2s;
+    }
+    .btn-supprimer{
+        background-color: red;
+        color: white;
+    }
+    .btn-modifier:hover {
+      background: var(--rouge-clair);
+    }
+
+    .btn-supprimer:hover {
+      background: #fde8e8;
+      border-color: var(--rouge-moyen);
+      color: var(--rouge);
+    }
+
+    .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.pagination button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #e8c8cc;
+  background: #ffffff;
+  color: #2d1a1a;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pagination button:hover {
+  background: #f9e8ea;
+}
+
+.pagination button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+#page-info {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #6b4444;
+  background: #f9e8ea;
+  border-radius: 8px;
+  border: 1px solid #e8c8cc;
+  min-width: 90px;
+  text-align: center;
+}
+  </style>
+</head>
+<body>
+
+
+  <aside class="sidebar">
+    <div class="sidebar-titre">
+      <h1>Contacts</h1>
+      <p>Gérez vos contacts localement</p>
+    </div>
+
+    <form class="formulaire" id="formulaire">
+      <div class="champ">
+        <label for="nom">Nom</label>
+        <span id="nomError"></span>
+        <input type="text" id="nom" placeholder="Ex: Diallo" />
+      </div>
+      <div class="champ">
+        <label for="prenom">Prénom</label>
+        <span id="prenomError"></span>
+        <input type="text" id="prenom" placeholder="Ex: Moussa" />
+      </div>
+
+
+
+      <div class="champ">
+        <label for="email">Email</label>
+        <span id="emailError"></span>
+        <input type="email" id="email" placeholder="Ex: moussa@gmail.com" />
+      </div>
+
+      <div class="champ">
+        <label for="telephone">Téléphone</label>
+        <span id="telephoneError"></span>
+        <input type="tel" id="telephone" placeholder="Ex: +221 77 000 00 00" />
+      </div>
+
+      <div class="champ">
+        <label for="role">Rôle</label>
+        <span id="roleError"></span>
+        <select id="role">
+          <option value="">-- Choisir --</option>
+          <option value="Admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+
+      <button class="btn-ajouter" id="btn-ajouter" type="submit">Ajouter</button>
+
+    </form>
+  </aside>
+
+
+  <main class="main">
+    <div class="barre-haut">
+      <div class="barre-haut-gauche">
+        <span class="compteur" id="compteur">0 contact</span>
+        <input type="text" class="input-recherche" id="recherche" placeholder="Rechercher…" />
+      </div>
+      <button class="btn-tout-supprimer" id="btn-tout-supprimer">Tout supprimer</button>
+      <!-- <button class="btn-tout-supprimer" id="btn-tout-archiver">Tout archiver</button> -->
+
+    </div>
+        <div id="message-succes" style="
+        display: none;
+        background-color: #d4edda;
+        color: #2d6a4f;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        text-align: center;
+        ">
+       
+        </div>
+    <div class="liste-contacts" id="liste-contacts">
+    </div>
+
+    <div class="pagination">
+        <button id="btn-prev">← Précédent</button>
+        <span id="page-info">Page 1 / 3</span>
+        <button id="btn-next">Suivant →</button>
+    </div>
+   
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
