@@ -1,8 +1,58 @@
 import { saisiUser,afficheAllCard,rechargerFormulaire,getAllChecked,getAllTotalContact,pageSuivante, pagePrecedente,afficheUnCard,setRecherche} from "./js/service/contactService.js";
-import { form,prenom,nom,email,telephone,selectRole,btnAjouter, listeContacts,btnToutSupprimer,btnPrev,btnInfo,btnNext,inputRecherche,modalConfirm,confirmTexte,confirmOui,confirmNon,toutSelectionner} from "./js/dom/element.js";
+import { form,prenom,nom,email,telephone,selectRole,btnAjouter, listeContacts,btnToutSupprimer,btnPrev,btnInfo,btnNext,inputRecherche,modalConfirm,confirmTexte,confirmOui,confirmNon,toutSelectionner,formLogin,inputLogin,inputPassword,loginError,btnDeconnexion,nomUser} from "./js/dom/element.js";
 import { ajoutUser, getAllUsers, modifierUser,supprimerUser } from "./js/store/contactStore.js";
 import { afficherSucces } from "./js/ui/modalRenderer.js";
 import {verifMail,verifData,verifTelephone, resetErrors,afficherErreurs} from "./js/validation/validation.js";
+import { navigate } from "./js/router/router.js";
+import { loginUser, logoutUser, getSession, isLoggedIn } from "./js/store/authStore.js";
+
+// LOGIN
+function init() {
+  if (isLoggedIn()) {
+    ouvrirApp(getSession());
+  } else {
+    navigate('login');
+  }
+}
+async function ouvrirApp(session) {
+  navigate('app');  
+  nomUser.textContent = session.nom;
+  await afficheAllCard();
+}
+
+formLogin.addEventListener("submit", async function(event) {
+  event.preventDefault();
+  loginError.textContent = ""; 
+  const loginVal = inputLogin.value.trim();
+  const passVal  = inputPassword.value.trim();
+
+  if (!loginVal || !passVal) {
+    loginError.textContent = "Remplissez tous les champs.";
+    return;
+  }
+
+  const resultat = await loginUser(loginVal, passVal);
+
+  if (!resultat.ok) {
+    loginError.textContent = resultat.message; 
+    return;
+  }
+
+  
+  formLogin.reset();
+  await ouvrirApp(resultat.user);
+});
+
+btnDeconnexion.addEventListener("click", function() {
+  logoutUser();           
+  navigate('login');      
+  formLogin.reset();
+});
+
+
+
+
+//CONTACT 
 
 let idModifier = null 
 form.addEventListener("submit",async function(event){
@@ -49,7 +99,7 @@ listeContacts.addEventListener("click",async function(event){
     }
     if(btnSupp){
         idSupprimer = btnSupp.dataset.id
-        
+        // console.log(btnSupp)
         modalConfirm.classList.remove("hidden")
         // console.log(modalConfirm)
         confirmTexte.textContent = "Voulez-vous vraiment supprimer cet contact"
@@ -67,7 +117,7 @@ listeContacts.addEventListener("click",async function(event){
 }
     }
 })
- console.log(idsCocher)
+//  console.log(idsCocher)
 
 
 toutSelectionner.addEventListener("change", async function() {
@@ -98,6 +148,8 @@ toutSelectionner.addEventListener("change", async function() {
 
 
 btnToutSupprimer.addEventListener("click", async function(){
+                    confirmTexte.textContent = "Voulez-vous vraiment supprimer ces contacts"
+
                 let promesse = idsCocher.map(id => supprimerUser(id))
                 await Promise.all(promesse)
             })
@@ -132,4 +184,4 @@ inputRecherche .addEventListener("input",async function(){
     // tab.forEach(t=>afficheUnCard(t))
 })
 
-await afficheAllCard()
+init()

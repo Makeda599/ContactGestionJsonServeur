@@ -28,3 +28,13 @@ export  const confirmNon = document.getElementById('confirmNon');
 
 //TOUT SELECTIONNER
 export  const toutSelectionner = document.getElementById('tout-selectionner');
+
+
+//login
+
+export const formLogin     = document.getElementById('form-login');
+export const inputLogin    = document.getElementById('login-login');
+export const inputPassword = document.getElementById('login-password');
+export const loginError    = document.getElementById('login-error');
+export const nomUser = document.getElementById("topbar-nom")
+export const btnDeconnexion = document.getElementById('btn-deconnexion');

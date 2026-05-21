@@ -4,108 +4,445 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Contacts</title>
+  <title>Contacts-SPA</title>
   <style>
     /* ===== RESET & BASE ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --rouge:       #8b1a2e;
+      --rouge-clair: #f9e8ea;
+      --rouge-moyen: #c0394f;
+      --rouge-sombre:#5e0e1d;
+      --gris-texte:  #6b4444;
+      --bordure:     #e8c8cc;
+      --blanc:       #ffffff;
+      --fond:        #fdf6f6;
+      --fond-page:   #fff5f5;
+      --succes:      #2d6a4f;
+      --succes-bg:   #d4edda;
+      --transition:  0.22s cubic-bezier(.4,0,.2,1);
     }
 
     body {
-      font-family: 'Georgia', serif;
-      background-color: #fff5f5;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--fond-page);
       color: #2d1a1a;
       min-height: 100vh;
-      display: flex;
     }
 
-    /* ===== VARIABLES ===== */
-    :root {
-      --rouge: #8b1a2e;
-      --rouge-clair: #f9e8ea;
-      --rouge-moyen: #c0394f;
-      --gris-texte: #6b4444;
-      --bordure: #e8c8cc;
-    }
+    /* ===== SPA VIEWS ===== */
+    .view { display: none; }
+    .view.active { display: flex; }
 
-    /* ===== SIDEBAR (panneau gauche) ===== */
-    .sidebar {
-      width: 340px;
+    /* ===================== LOGIN PAGE - CENTRÉ ===================== */
+    #view-login {
       min-height: 100vh;
-      background-color: #ffffff;
-      border-right: 1px solid var(--bordure);
-      padding: 32px 28px;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fff5f5 0%, #fde8e8 100%);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background: var(--blanc);
+      border-radius: 32px;
+      box-shadow: 0 25px 50px -12px rgba(139, 26, 46, 0.25);
+      padding: 48px 40px;
+      margin: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .login-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 30px 60px -12px rgba(139, 26, 46, 0.3);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .login-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--rouge) 0%, var(--rouge-sombre) 100%);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2.5rem;
+      color: white;
+      box-shadow: 0 10px 20px -5px rgba(139, 26, 46, 0.3);
+    }
+
+    .login-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: #1a0a0a;
+      margin-bottom: 8px;
+    }
+
+    .login-header p {
+      font-size: 0.85rem;
+      color: var(--gris-texte);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Form styles */
+    .login-form {
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    .sidebar-titre h1 {
-      font-size: 1.6rem;
-      font-weight: bold;
-      color: #1a0a0a;
+    .login-champ {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
     }
 
-    .sidebar-titre h1::before {
+    .login-champ label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--gris-texte);
+      text-transform: uppercase;
+    }
+
+    .login-input-wrap {
+      position: relative;
+    }
+
+    .login-input-wrap i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--rouge-moyen);
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    .login-champ input {
+      width: 100%;
+      padding: 14px 14px 14px 42px;
+      border: 2px solid var(--bordure);
+      border-radius: 14px;
+      background: var(--rouge-clair);
+      color: #2d1a1a;
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .login-champ input::placeholder { 
+      color: #c4a0a5;
+      font-size: 0.85rem;
+    }
+
+    .login-champ input:focus {
+      border-color: var(--rouge-moyen);
+      box-shadow: 0 0 0 3px rgba(192, 57, 79, 0.1);
+    }
+
+    .login-champ input:focus + i {
+      color: var(--rouge);
+    }
+
+    .login-error {
+      color: var(--rouge-moyen);
+      font-size: 0.8rem;
+      min-height: 18px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--rouge) 0%, var(--rouge-sombre) 100%);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      letter-spacing: 0.03em;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-login::before {
       content: '';
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      background-color: var(--rouge);
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-login:hover::before {
+      left: 100%;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 26, 46, 0.3);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    /* Stats section */
+    .login-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 2px solid var(--bordure);
+    }
+
+    .login-stat {
+      text-align: center;
+      flex: 1;
+    }
+
+    .login-stat i {
+      font-size: 1.4rem;
+      color: var(--rouge-moyen);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .login-stat strong {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1a0a0a;
+    }
+
+    .login-stat span {
+      font-size: 0.7rem;
+      color: var(--gris-texte);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Demo hint */
+    .login-hint {
+      margin-top: 24px;
+      padding: 12px 16px;
+      background: var(--rouge-clair);
+      border-radius: 12px;
+      border: 1px solid var(--bordure);
+    }
+
+    .login-hint p {
+      font-size: 0.75rem;
+      color: var(--gris-texte);
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .login-hint strong { 
+      color: var(--rouge);
+      font-weight: 600;
+    }
+
+    /* ===== MAIN APP ===== */
+    #view-app {
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Topbar */
+    .topbar {
+      height: 56px;
+      background: var(--blanc);
+      border-bottom: 1px solid var(--bordure);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 1px 8px rgba(139,26,46,0.06);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-logo {
+      width: 32px; height: 32px;
+      background: var(--rouge);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.85rem;
+    }
+
+    .topbar-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.15rem;
+      color: #1a0a0a;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--gris-texte);
+    }
+
+    .topbar-avatar {
+      width: 32px; height: 32px;
       border-radius: 50%;
+      background: var(--rouge-clair);
+      border: 2px solid var(--bordure);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--rouge);
+    }
+
+    .btn-deconnexion {
+      padding: 6px 14px;
+      border: 1.5px solid var(--bordure);
+      border-radius: 8px;
+      background: white;
+      color: var(--rouge);
+      font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-deconnexion:hover {
+      background: var(--rouge);
+      color: white;
+      border-color: var(--rouge);
+    }
+
+    /* App body */
+    .app-body {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 320px;
+      min-height: 100%;
+      background: var(--blanc);
+      border-right: 1px solid var(--bordure);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .sidebar-titre {
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--bordure);
+    }
+
+    .sidebar-titre h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.15rem;
+      color: #1a0a0a;
     }
 
     .sidebar-titre p {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--gris-texte);
-      font-family: 'Courier New', monospace;
-      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 3px;
     }
-
 
     .formulaire {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-top: 8px;
+      gap: 14px;
     }
 
     .champ label {
       display: block;
-      font-size: 0.7rem;
-      font-weight: bold;
+      font-size: 0.68rem;
+      font-weight: 600;
       letter-spacing: 0.1em;
       color: var(--gris-texte);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       text-transform: uppercase;
     }
 
-    .champ input,
-    .champ select {
+    .champ input, .champ select {
       width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--bordure);
+      padding: 9px 13px;
+      border: 1.5px solid var(--bordure);
       border-radius: 8px;
-      background-color: var(--rouge-clair);
+      background: var(--rouge-clair);
       color: #2d1a1a;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
+      font-family: 'DM Sans', sans-serif;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color var(--transition), box-shadow var(--transition);
     }
 
-    .champ input::placeholder {
-      color: #c4a0a5;
-    }
-
-    .champ input:focus,
-    .champ select:focus {
+    .champ input:focus, .champ select:focus {
       border-color: var(--rouge-moyen);
+      box-shadow: 0 0 0 3px rgba(192,57,79,0.08);
     }
 
     .champ select {
@@ -113,319 +450,567 @@
       cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b1a2e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .champ-error {
+      font-size: 0.73rem;
+      color: var(--rouge-moyen);
+      margin-top: 3px;
+      font-weight: 500;
+      min-height: 14px;
+      display: block;
     }
 
     .btn-ajouter {
       width: 100%;
-      padding: 13px;
-      background-color: var(--rouge);
+      padding: 12px;
+      background: var(--rouge);
       color: white;
       border: none;
       border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: bold;
-      letter-spacing: 0.05em;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
       cursor: pointer;
-      margin-top: 8px;
-      transition: background-color 0.2s;
+      margin-top: 4px;
+      letter-spacing: 0.04em;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     .btn-ajouter:hover {
-      background-color: #6e1222;
+      background: var(--rouge-sombre);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 16px rgba(139,26,46,0.25);
     }
 
-   
+    /* Main */
     .main {
       flex: 1;
-      padding: 32px 36px;
+      padding: 28px 32px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
     }
 
-   
     .barre-haut {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .barre-haut-gauche {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .compteur {
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       color: var(--gris-texte);
       font-style: italic;
+      white-space: nowrap;
     }
 
     .input-recherche {
       padding: 8px 16px;
-      border: 1px solid var(--bordure);
+      border: 1.5px solid var(--bordure);
       border-radius: 20px;
-      background-color: #fff0f1;
-      font-size: 0.85rem;
+      background: #fff0f1;
+      font-size: 0.83rem;
+      font-family: 'DM Sans', sans-serif;
       color: #2d1a1a;
       outline: none;
-      width: 220px;
-      transition: border-color 0.2s;
-    }
-
-    .input-recherche::placeholder {
-      color: #c4a0a5;
+      width: 210px;
+      transition: border-color var(--transition), box-shadow var(--transition);
     }
 
     .input-recherche:focus {
       border-color: var(--rouge-moyen);
+      box-shadow: 0 0 0 3px rgba(192,57,79,0.08);
+    }
+
+    .select-tout-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      font-size: 0.83rem;
+      color: var(--gris-texte);
+      padding: 7px 14px;
+      border: 1.5px solid var(--bordure);
+      border-radius: 20px;
+      background: white;
+      transition: all var(--transition);
+      user-select: none;
+    }
+
+    .select-tout-label:hover { background: var(--rouge-clair); border-color: var(--rouge-moyen); }
+
+    .select-tout-label input[type="checkbox"] {
+      accent-color: var(--rouge);
+      width: 14px; height: 14px;
+      cursor: pointer;
     }
 
     .btn-tout-supprimer {
       padding: 8px 18px;
-      border: 1px solid var(--bordure);
+      border: 1.5px solid var(--rouge-moyen);
       border-radius: 8px;
       background: white;
-      color: var(--gris-texte);
-      font-size: 0.85rem;
+      color: var(--rouge);
+      font-size: 0.83rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .btn-tout-supprimer:hover {
-      background: var(--rouge-clair);
+      background: var(--rouge);
+      color: white;
     }
 
+    /* Success message */
+    #message-succes {
+      display: none;
+      background: var(--succes-bg);
+      color: var(--succes);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      text-align: center;
+      font-weight: 500;
+      animation: fadeIn 0.3s ease;
+    }
 
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+    /* Cards */
     .liste-contacts {
       display: grid;
-    grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 14px;
     }
 
-   
     .carte-contact {
       background: white;
-      border: 1px solid var(--bordure);
+      border: 1.5px solid var(--bordure);
       border-radius: 14px;
-      padding: 20px 24px;
-      max-width: 460px;
+      padding: 18px 20px;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+
+    .carte-contact:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(139,26,46,0.1);
+      border-color: var(--rouge-moyen);
     }
 
     .carte-entete {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       margin-bottom: 12px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--bordure);
     }
 
+    .carte-entete input[type="checkbox"] {
+      accent-color: var(--rouge);
+      width: 15px; height: 15px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
     .avatar {
-      width: 46px;
-      height: 46px;
+      width: 42px; height: 42px;
       border-radius: 50%;
-      background-color: var(--rouge-clair);
+      background: var(--rouge-clair);
       color: var(--rouge);
-      font-weight: bold;
-      font-size: 0.9rem;
+      font-weight: 700;
+      font-size: 0.88rem;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      border: 2px solid var(--bordure);
+      font-family: 'DM Serif Display', serif;
     }
 
-    .carte-nom h3 {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #1a0a0a;
-    }
+    .carte-nom h3 { font-size: 0.95rem; font-weight: 600; color: #1a0a0a; }
+    .carte-nom span { font-size: 0.7rem; color: var(--gris-texte); letter-spacing: 0.08em; text-transform: uppercase; }
 
-    .carte-nom span {
-      font-size: 0.75rem;
-      color: var(--gris-texte);
-      letter-spacing: 0.08em;
+    .badge-role {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
+
+    .badge-Admin { background: #fde8e8; color: var(--rouge); }
+    .badge-user  { background: #e8f0fd; color: #1a4a8b; }
 
     .carte-infos {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      font-size: 0.85rem;
+      gap: 4px;
+      font-size: 0.82rem;
       color: var(--gris-texte);
       margin-bottom: 14px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .carte-infos span::before {
-      margin-right: 6px;
-    }
+    .carte-actions { display: flex; gap: 8px; }
 
-    .carte-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-modifier,
-    .btn-supprimer {
-      padding: 7px 18px;
+    .btn-modifier, .btn-supprimer {
+      padding: 6px 16px;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif;
       cursor: pointer;
-      border: 1px solid var(--bordure);
+      border: 1.5px solid var(--bordure);
+      font-weight: 500;
+      transition: all var(--transition);
+    }
+
+    .btn-modifier {
       background: white;
       color: #2d1a1a;
-      transition: background 0.2s;
-    }
-    .btn-supprimer{
-        background-color: red;
-        color: white;
-    }
-    .btn-modifier:hover {
-      background: var(--rouge-clair);
     }
 
-    .btn-supprimer:hover {
+    .btn-modifier:hover { background: var(--rouge-clair); border-color: var(--rouge-moyen); color: var(--rouge); }
+
+    .btn-supprimer {
+      background: var(--rouge);
+      color: white;
+      border-color: var(--rouge);
+    }
+
+    .btn-supprimer:hover { background: var(--rouge-sombre); border-color: var(--rouge-sombre); }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .pagination button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: 1.5px solid var(--bordure);
+      background: white;
+      color: #2d1a1a;
+      font-size: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--transition);
+    }
+
+    .pagination button:hover { background: var(--rouge-clair); border-color: var(--rouge-moyen); }
+    .pagination button:disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+
+    #page-info {
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      color: var(--gris-texte);
+      background: var(--rouge-clair);
+      border-radius: 8px;
+      border: 1.5px solid var(--bordure);
+      min-width: 96px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 60;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+      width: 340px;
+      max-width: 95vw;
+      padding: 36px 32px;
+      text-align: center;
+      animation: popIn 0.25s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-icon {
+      width: 56px; height: 56px;
       background: #fde8e8;
-      border-color: var(--rouge-moyen);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.4rem;
       color: var(--rouge);
     }
 
-    .pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 24px;
-}
+    #confirmTexte {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1a0a0a;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
 
-.pagination button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #e8c8cc;
-  background: #ffffff;
-  color: #2d1a1a;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
+    .modal-btns { display: flex; justify-content: center; gap: 16px; }
 
-.pagination button:hover {
-  background: #f9e8ea;
-}
+    #confirmOui, #confirmNon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      border: 2px solid;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
 
-.pagination button:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
+    #confirmOui {
+      background: #f0fdf4;
+      border-color: #22c55e;
+      color: #16a34a;
+    }
 
-#page-info {
-  padding: 8px 16px;
-  font-size: 14px;
-  color: #6b4444;
-  background: #f9e8ea;
-  border-radius: 8px;
-  border: 1px solid #e8c8cc;
-  min-width: 90px;
-  text-align: center;
-}
+    #confirmOui:hover { background: #22c55e; color: white; }
+
+    #confirmNon {
+      background: #fdf2f2;
+      border-color: var(--rouge-moyen);
+      color: var(--rouge-moyen);
+    }
+
+    #confirmNon:hover { background: var(--rouge-moyen); color: white; }
+
+    /* Utilities */
+    .hidden { display: none !important; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .login-card {
+        padding: 32px 24px;
+        margin: 16px;
+      }
+      
+      .login-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+      }
+      
+      .login-header h2 {
+        font-size: 1.6rem;
+      }
+    }
   </style>
 </head>
 <body>
 
-
-  <aside class="sidebar">
-    <div class="sidebar-titre">
-      <h1>Contacts</h1>
-      <p>Gérez vos contacts localement</p>
-    </div>
-
-    <form class="formulaire" id="formulaire">
-      <div class="champ">
-        <label for="nom">Nom</label>
-        <span id="nomError"></span>
-        <input type="text" id="nom" placeholder="Ex: Diallo" />
-      </div>
-      <div class="champ">
-        <label for="prenom">Prénom</label>
-        <span id="prenomError"></span>
-        <input type="text" id="prenom" placeholder="Ex: Moussa" />
-      </div>
-
-
-
-      <div class="champ">
-        <label for="email">Email</label>
-        <span id="emailError"></span>
-        <input type="email" id="email" placeholder="Ex: moussa@gmail.com" />
-      </div>
-
-      <div class="champ">
-        <label for="telephone">Téléphone</label>
-        <span id="telephoneError"></span>
-        <input type="tel" id="telephone" placeholder="Ex: +221 77 000 00 00" />
-      </div>
-
-      <div class="champ">
-        <label for="role">Rôle</label>
-        <span id="roleError"></span>
-        <select id="role">
-          <option value="">-- Choisir --</option>
-          <option value="Admin">Admin</option>
-          <option value="user">User</option>
-        </select>
-      </div>
-
-      <button class="btn-ajouter" id="btn-ajouter" type="submit">Ajouter</button>
-
-    </form>
-  </aside>
-
-
-  <main class="main">
-    <div class="barre-haut">
-      <div class="barre-haut-gauche">
-        <span class="compteur" id="compteur">0 contact</span>
- 
-        <input type="text" class="input-recherche" id="recherche" placeholder="Rechercher…" />
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:var(--gris-texte)"  class="input-recherche">
-        <input type="checkbox" id="tout-selectionner"  style="width:16px; height:16px; cursor:pointer; accent-color:var(--rouge);">
-        Tout sélectionner
-    </label>
-      </div>
-      <button class="btn-tout-supprimer hidden
-      " id="btn-tout-supprimer">Tout supprimer</button>
-      <!-- <button class="btn-tout-supprimer" id="btn-tout-archiver">Tout archiver</button> -->
-
-    </div>
-        <div id="message-succes" style="
-        display: none;
-        background-color: #d4edda;
-        color: #2d6a4f;
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        text-align: center;
-        ">
-       
+  <!-- ====== VIEW: LOGIN (CENTRÉ) ====== -->
+  <div id="view-login" class="view active">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-icon">
+          <i class="fa-solid fa-address-book"></i>
         </div>
-    <div class="liste-contacts" id="liste-contacts">
+        <h2>Bienvenue</h2>
+        <p>Connectez-vous à votre espace</p>
+      </div>
+
+      <form class="login-form" id="form-login">
+        <div class="login-champ">
+          <label for="login-login">Identifiant</label>
+          <div class="login-input-wrap">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="login-login" placeholder="admin ou user" autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="login-champ">
+          <label for="login-password">Mot de passe</label>
+          <div class="login-input-wrap">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="login-password" placeholder="Mot de passe" autocomplete="current-password" />
+          </div>
+        </div>
+
+        <p class="login-error" id="login-error"></p>
+
+        <button type="submit" class="btn-login">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Se connecter
+        </button>
+      </form>
+
+      <!-- <div class="login-stats">
+        <div class="login-stat">
+          <i class="fa-solid fa-users"></i>
+          <strong>Gestion</strong>
+          <span>Contacts</span>
+        </div>
+        <div class="login-stat">
+          <i class="fa-solid fa-shield-halved"></i>
+          <strong>Sécurisé</strong>
+          <span>SSL</span>
+        </div>
+        <div class="login-stat">
+          <i class="fa-solid fa-bolt"></i>
+          <strong>Rapide</strong>
+          <span>SPA</span>
+        </div>
+      </div>
+
+      <div class="login-hint">
+        <p>
+          🔐 <strong>Accès démo</strong><br>
+          Admin : <strong>admin</strong> / <strong>admin123</strong><br>
+          User : <strong>user</strong> / <strong>user123</strong>
+        </p>
+      </div> -->
     </div>
+  </div>
 
-    <div class="pagination">
-        <button id="btn-prev">← Précédent</button>
-        <span id="page-info">Page 1 / 3</span>
-        <button id="btn-next">Suivant →</button>
+  <!-- ====== VIEW: APP ====== -->
+  <div id="view-app" class="view">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-logo"><i class="fa-solid fa-address-book"></i></div>
+        <span class="topbar-title">Contacts</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-user">
+          <div class="topbar-avatar" id="topbar-avatar"><i class="fa-solid fa-user"></i></div>
+          <span id="topbar-nom">—</span>
+        </div>
+        <button class="btn-deconnexion" id="btn-deconnexion">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Déconnexion
+        </button>
+      </div>
+    </header>
+
+    <div class="app-body">
+
+      <!-- Sidebar / Formulaire -->
+      <aside class="sidebar">
+        <div class="sidebar-titre">
+          <h2 id="sidebar-form-title">Nouveau contact</h2>
+          <p>Remplissez les champs ci-dessous</p>
+        </div>
+
+        <form class="formulaire" id="formulaire">
+          <div class="champ">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" placeholder="Ex: Diallo" />
+            <span class="champ-error" id="nomError"></span>
+          </div>
+          <div class="champ">
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" placeholder="Ex: Moussa" />
+            <span class="champ-error" id="prenomError"></span>
+          </div>
+          <div class="champ">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Ex: moussa@gmail.com" />
+            <span class="champ-error" id="emailError"></span>
+          </div>
+          <div class="champ">
+            <label for="telephone">Téléphone</label>
+            <input type="tel" id="telephone" placeholder="Ex: 771234567" />
+            <span class="champ-error" id="telephoneError"></span>
+          </div>
+          <div class="champ">
+            <label for="role">Rôle</label>
+            <select id="role">
+              <option value="">-- Choisir --</option>
+              <option value="Admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+            <span class="champ-error" id="roleError"></span>
+          </div>
+          <button class="btn-ajouter" id="btn-ajouter" type="submit">
+            <i class="fa-solid fa-plus"></i>
+            <span id="btn-ajouter-text">Ajouter</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Main content -->
+      <main class="main">
+
+        <div class="barre-haut">
+          <div class="barre-haut-gauche">
+            <span class="compteur" id="compteur">0 contact</span>
+            <input type="text" class="input-recherche" id="recherche" placeholder="🔍 Rechercher…" />
+            <label class="select-tout-label">
+              <input type="checkbox" id="tout-selectionner">
+              Tout sélectionner
+            </label>
+          </div>
+          <button class="btn-tout-supprimer hidden" id="btn-tout-supprimer">
+            <i class="fa-solid fa-trash"></i>
+            Supprimer la sélection
+          </button>
+        </div>
+
+        <div id="message-succes"></div>
+
+        <div class="liste-contacts" id="liste-contacts"></div>
+
+        <div class="pagination">
+          <button id="btn-prev">← Précédent</button>
+          <span id="page-info">Page 1 / 1</span>
+          <button id="btn-next">Suivant →</button>
+        </div>
+
+      </main>
     </div>
+  </div>
 
-  </main>
-
+  <!-- Modal confirmation -->
  <div id="modalConfirm" class="hidden fixed inset-0 bg-black/40 z-[60] flex items-center justify-center">
   <div class="bg-white rounded-2xl shadow-xl w-[340px] max-w-[95vw] p-8 text-center">
 
@@ -448,6 +1033,7 @@
 
   </div>
 </div>
+
   <script type="module" src="/app.js"></script>
 </body>
 </html>
